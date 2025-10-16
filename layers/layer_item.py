@@ -76,3 +76,10 @@ class LayerItem(QtWidgets.QGraphicsRectItem):
 
         self.params = new_params
         self.text_item.setText(self._display_text())
+
+    def itemChange(self, change, value):
+        if change == QtWidgets.QGraphicsItem.ItemPositionChange:
+            if hasattr(self.scene(), "parent_widget"):
+                # 박스 위치 변경 시 Sequence 갱신 + Edge 갱신
+                self.scene().parent_widget.update_sequence_from_positions()
+        return super().itemChange(change, value)

@@ -14,6 +14,8 @@ class DesignerWindow(QtWidgets.QMainWindow):
         self.resize(1300,700)
         self.layer_uid = 0
         self.layer_items = {}   # uid -> LayerItem
+        # self.layer_item.setZValue(0)  # 기본값 0
+
         self.edges = []
 
         central = QtWidgets.QWidget()
@@ -47,25 +49,25 @@ class DesignerWindow(QtWidgets.QMainWindow):
         right_layout.addWidget(self.sequence_list, 1)
 
         # Buttons
-        btn_export = QtWidgets.QPushButton("Export PyTorch Code")
-        btn_export.clicked.connect(self.export_code)
-        btn_save = QtWidgets.QPushButton("Save Design (.json)")
-        btn_save.clicked.connect(self.save_design)
-        btn_load = QtWidgets.QPushButton("Load Design (.json)")
-        btn_load.clicked.connect(self.load_design)
-        btn_clear = QtWidgets.QPushButton("Clear Canvas")
-        btn_clear.clicked.connect(self.clear_canvas)
-        btn_connect = QtWidgets.QPushButton("Connect Layers")
-        btn_connect.clicked.connect(self.connect_layers_dialog)
+        self.btn_export = QtWidgets.QPushButton("Export PyTorch Code")
+        self.btn_export.clicked.connect(self.export_code)
+        self.btn_save = QtWidgets.QPushButton("Save Design (.json)")
+        self.btn_save.clicked.connect(self.save_design)
+        self.btn_load = QtWidgets.QPushButton("Load Design (.json)")
+        self.btn_load.clicked.connect(self.load_design)
+        self.btn_clear = QtWidgets.QPushButton("Clear Canvas")
+        self.btn_clear.clicked.connect(self.clear_canvas)
+        self.btn_connect = QtWidgets.QPushButton("Connect Layers")
+        self.btn_connect.clicked.connect(self.connect_layers_dialog)
 
         row1 = QtWidgets.QHBoxLayout()
-        row1.addWidget(btn_export)
-        row1.addWidget(btn_save)
+        row1.addWidget(self.btn_export)
+        row1.addWidget(self.btn_save)
         row2 = QtWidgets.QHBoxLayout()
-        row2.addWidget(btn_load)
-        row2.addWidget(btn_clear)
+        row2.addWidget(self.btn_load)
+        row2.addWidget(self.btn_clear)
         row3 = QtWidgets.QHBoxLayout()
-        row3.addWidget(btn_connect)
+        row3.addWidget(self.btn_connect)
         right_layout.addLayout(row1)
         right_layout.addLayout(row2)
         right_layout.addLayout(row3)
@@ -108,19 +110,42 @@ class DesignerWindow(QtWidgets.QMainWindow):
                 self.layer_items[uid].setPos(x_offset, y_offset + idx * y_gap)
 
     def update_sequence_from_positions(self):
-        # Y 좌표 기준으로 시퀀스 갱신
+        # Y 좌표 기준으로 정렬
         items = sorted(self.layer_items.values(), key=lambda i: i.pos().y())
         self.sequence_list.clear()
         for item in items:
             li = QtWidgets.QListWidgetItem(f"{item.layer_type} #{item.uid}")
             li.setData(QtCore.Qt.UserRole, item.uid)
             self.sequence_list.addItem(li)
+        
+        # Edge도 함께 갱신
         self.update_connections()
 
     # ---------------- Connections ----------------
+    # def connect_layers_dialog(self):
+    #     items = [self.sequence_list.item(i) for i in range(self.sequence_list.count())]
+    #     if len(items) < 2:
+    #         return
+
+    #     # 1. 기존 connections 초기화
+    #     for layer in self.layer_items.values():
+    #         layer.connections = []
+
+    #     # 2. sequence_list 순서대로 connections 생성
+    #     uids = [it.data(QtCore.Qt.UserRole) for it in items]
+    #     for i in range(len(uids) - 1):
+    #         src = self.layer_items[uids[i]]
+    #         tgt = self.layer_items[uids[i + 1]]
+    #         if tgt.uid not in src.connections:
+    #             src.connections.append(tgt.uid)
+
+    #     # 3. Edge 갱신
+    #     self.update_connections()
+    
     def connect_layers_dialog(self):
         items = [self.sequence_list.item(i) for i in range(self.sequence_list.count())]
         if len(items) < 2:
+            QtWidgets.QMessageBox.warning(self, "Connection Failed", "레이어가 2개 이상이어야 합니다.")
             return
 
         # 1. 기존 connections 초기화
@@ -135,8 +160,22 @@ class DesignerWindow(QtWidgets.QMainWindow):
             if tgt.uid not in src.connections:
                 src.connections.append(tgt.uid)
 
-        # 3. Edge 갱신
+        # 3. 구조 검증
+        from utils.validate_network import validate_network
+        valid, msg = validate_network(self.layer_items, self.sequence_list)
+        if not valid:
+            QtWidgets.QMessageBox.warning(self, "Connection Failed", msg)
+            return
+
+        # 4. Edge 갱신
         self.update_connections()
+
+        # 5. Save / Export 버튼 활성화
+        self.btn_save.setEnabled(True)
+        self.btn_export.setEnabled(True)
+
+        QtWidgets.QMessageBox.information(self, "Connection Success", "레이어 연결이 완료되었습니다.")
+
 
     def update_connections(self):
     # 1. 기존 EdgeItem 제거
