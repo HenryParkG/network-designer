@@ -1,0 +1,200 @@
+{
+    "layers": [
+      {
+        "uid": 1,
+        "type": "Conv2d",
+        "params": {
+          "in_channels": 3,
+          "out_channels": 16,
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        },
+        "pos": [50.0, 50.0],
+        "connections": [2]
+      },
+      {
+        "uid": 2,
+        "type": "Conv2d",
+        "params": {
+          "in_channels": 16,
+          "out_channels": 32,
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        },
+        "pos": [150.0, 50.0],
+        "connections": [3]
+      },
+      {
+        "uid": 3,
+        "type": "Conv2d",
+        "params": {
+          "in_channels": 32,
+          "out_channels": 64,
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        },
+        "pos": [250.0, 50.0],
+        "connections": [4]
+      },
+      {
+        "uid": 4,
+        "type": "Conv2d",
+        "params": {
+          "in_channels": 64,
+          "out_channels": 128,
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        },
+        "pos": [350.0, 50.0],
+        "connections": [5]
+      },
+      {
+        "uid": 5,
+        "type": "Conv2d",
+        "params": {
+          "in_channels": 128,
+          "out_channels": 256,
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        },
+        "pos": [450.0, 50.0],
+        "connections": [6]
+      },
+      {
+        "uid": 6,
+        "type": "Conv2d",
+        "params": {
+          "in_channels": 256,
+          "out_channels": 512,
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        },
+        "pos": [550.0, 50.0],
+        "connections": [7]
+      },
+      {
+        "uid": 7,
+        "type": "Conv2d",
+        "params": {
+          "in_channels": 512,
+          "out_channels": 1024,
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        },
+        "pos": [650.0, 50.0],
+        "connections": [8]
+      },
+      {
+        "uid": 8,
+        "type": "Flatten",
+        "params": {
+          "start_dim": 1,
+          "end_dim": -1
+        },
+        "pos": [750.0, 50.0],
+        "connections": [9]
+      },
+      {
+        "uid": 9,
+        "type": "Linear",
+        "params": {
+          "in_features": 1024,
+          "out_features": 512,
+          "bias": true
+        },
+        "pos": [850.0, 50.0],
+        "connections": [10]
+      },
+      {
+        "uid": 10,
+        "type": "Linear",
+        "params": {
+          "in_features": 512,
+          "out_features": 256,
+          "bias": true
+        },
+        "pos": [950.0, 50.0],
+        "connections": [11]
+      },
+      {
+        "uid": 11,
+        "type": "Linear",
+        "params": {
+          "in_features": 256,
+          "out_features": 128,
+          "bias": true
+        },
+        "pos": [1050.0, 50.0],
+        "connections": [12]
+      },
+      {
+        "uid": 12,
+        "type": "Linear",
+        "params": {
+          "in_features": 128,
+          "out_features": 64,
+          "bias": true
+        },
+        "pos": [1150.0, 50.0],
+        "connections": [13]
+      },
+      {
+        "uid": 13,
+        "type": "Linear",
+        "params": {
+          "in_features": 64,
+          "out_features": 32,
+          "bias": true
+        },
+        "pos": [1250.0, 50.0],
+        "connections": [14]
+      },
+      {
+        "uid": 14,
+        "type": "Linear",
+        "params": {
+          "in_features": 32,
+          "out_features": 16,
+          "bias": true
+        },
+        "pos": [1350.0, 50.0],
+        "connections": [15]
+      },
+      {
+        "uid": 15,
+        "type": "Linear",
+        "params": {
+          "in_features": 16,
+          "out_features": 1,
+          "bias": true
+        },
+        "pos": [1450.0, 50.0],
+        "connections": []
+      }
+    ],
+    "sequence": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  }
+  

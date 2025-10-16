@@ -1,0 +1,54 @@
+{
+  "layers": [
+    {
+      "uid": 6,
+      "type": "Linear",
+      "params": {
+        "in_features": 128,
+        "out_features": 64,
+        "bias": true
+      },
+      "pos": [
+        50.0,
+        50.0
+      ],
+      "connections": [
+        8
+      ]
+    },
+    {
+      "uid": 7,
+      "type": "Linear",
+      "params": {
+        "in_features": 64,
+        "out_features": 32,
+        "bias": "True"
+      },
+      "pos": [
+        50.0,
+        250.0
+      ],
+      "connections": []
+    },
+    {
+      "uid": 8,
+      "type": "Flatten",
+      "params": {
+        "start_dim": 1,
+        "end_dim": -1
+      },
+      "pos": [
+        53.0,
+        146.0
+      ],
+      "connections": [
+        7
+      ]
+    }
+  ],
+  "sequence": [
+    6,
+    8,
+    7
+  ]
+}

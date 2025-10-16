@@ -5,7 +5,7 @@ class EdgeItem(QtWidgets.QGraphicsLineItem):
         super().__init__()
         self.source_item = source_item
         self.target_item = target_item
-        self.setPen(QtGui.QPen(QtGui.QColor("black"), 2))
+        self.setPen(QtGui.QPen(QtGui.QColor("white"), 2))
         
         self.setZValue(-1)
 
