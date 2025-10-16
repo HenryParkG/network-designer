@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 import json
 
 def save_design_json(layer_items, sequence_list):
@@ -27,4 +27,14 @@ def load_design_json(designer_window):
             params=entry["params"]
             from layers.layer_item import LayerItem
             item=LayerItem(t,params,uid)
-            from Py
+            from PyQt5 import QtCore
+            item.setPos(QtCore.QPointF(*entry.get("pos",[0,0])))
+            item.connections=entry.get("connections",[])
+            designer_window.scene.addItem(item)
+            designer_window.layer_items[uid] = item
+        for uid in doc.get("sequence",[]):
+            if uid in designer_window.layer_items:
+                li = QtWidgets.QListWidgetItem(f"{designer_window.layer_items[uid].layer_type} #{uid}")
+                li.setData(QtCore.Qt.UserRole, uid)
+                designer_window.sequence_list.addItem(li)
+        designer_window.update_connections()

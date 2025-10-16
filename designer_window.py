@@ -108,14 +108,14 @@ class DesignerWindow(QtWidgets.QMainWindow):
                 self.layer_items[uid].setPos(x_offset, y_offset + idx * y_gap)
 
     def update_sequence_from_positions(self):
-        # Y 좌표 기준으로 시퀀스 갱신
+        # Y 좌표 기준으로 정렬
         items = sorted(self.layer_items.values(), key=lambda i: i.pos().y())
         self.sequence_list.clear()
         for item in items:
             li = QtWidgets.QListWidgetItem(f"{item.layer_type} #{item.uid}")
             li.setData(QtCore.Qt.UserRole, item.uid)
             self.sequence_list.addItem(li)
-        self.update_connections()
+        self.update_connections()  # Edge 갱신
 
     # ---------------- Connections ----------------
     def connect_layers_dialog(self):
@@ -128,6 +128,7 @@ class DesignerWindow(QtWidgets.QMainWindow):
             if tgt.uid not in src.connections:
                 src.connections.append(tgt.uid)
         self.update_connections()
+
 
     def update_connections(self):
         for e in self.edges: self.scene.removeItem(e)
@@ -144,7 +145,13 @@ class DesignerWindow(QtWidgets.QMainWindow):
         export_to_pytorch(self.layer_items, self.sequence_list)
 
     def save_design(self):
+        from utils.validate_network import validate_network
+        valid, msg = validate_network(self.layer_items, self.sequence_list)
+        if not valid:
+            QtWidgets.QMessageBox.warning(self, "Validation Failed", msg)
+            return
         save_design_json(self.layer_items, self.sequence_list)
+
 
     def load_design(self):
         load_design_json(self)

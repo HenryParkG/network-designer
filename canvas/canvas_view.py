@@ -1,10 +1,11 @@
 from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 
 class CanvasView(QtWidgets.QGraphicsView):
     def __init__(self, scene, parent_window):
         super().__init__(scene)
         self.parent_window = parent_window
-        self.setRenderHints(QtWidgets.QPainter.Antialiasing|QtWidgets.QPainter.TextAntialiasing)
+        self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.TextAntialiasing)
         self.setAcceptDrops(True)
         self.setSceneRect(0, 0, 1600, 1000)
         self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
