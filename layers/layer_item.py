@@ -52,7 +52,7 @@ class LayerItem(QtWidgets.QGraphicsRectItem):
     def itemChange(self, change, value):
         if change == QtWidgets.QGraphicsItem.ItemPositionChange:
             if hasattr(self.scene(), "parent_widget"):
-                self.scene().parent_widget.update_sequence_from_positions()
+                self.scene().parent_widget.on_canvas_changed()
         return super().itemChange(change, value)
 
     def contextMenuEvent(self, event):
