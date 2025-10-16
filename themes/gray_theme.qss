@@ -1,0 +1,81 @@
+QWidget {
+    background-color: #d4d4d4;
+    color: #202020;
+}
+
+/* 그룹박스 */
+QGroupBox {
+    background-color: #e0e0e0;
+    border: 1px solid #b0b0b0;
+    margin-top: 10px;
+    padding: 5px;
+}
+QGroupBox:title {
+    subcontrol-origin: margin;
+    left: 5px;
+    padding: 0 3px 0 3px;
+    color: #202020;
+}
+
+/* 라벨 */
+QLabel {
+    color: #202020;
+}
+
+/* 버튼 */
+QPushButton {
+    background-color: #cccccc;
+    border: 1px solid #a0a0a0;
+    padding: 5px;
+    border-radius: 3px;
+}
+QPushButton:hover {
+    background-color: #b8b8b8;
+}
+QPushButton:pressed {
+    background-color: #a0a0a0;
+}
+
+/* 리스트 위젯 */
+QListWidget {
+    background-color: #e0e0e0;
+    color: #202020;
+    border: 1px solid #b0b0b0;
+}
+QListWidget::item:selected {
+    background-color: #b8b8b8;
+}
+
+/* 입력창 */
+QLineEdit, QComboBox, QTextEdit {
+    background-color: #e0e0e0;
+    color: #202020;
+    border: 1px solid #b0b0b0;
+}
+
+/* 스크롤바 */
+QScrollBar:vertical {
+    background: #d0d0d0;
+    width: 12px;
+}
+QScrollBar::handle:vertical {
+    background: #a0a0a0;
+    min-height: 20px;
+    border-radius: 5px;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+/* GraphicsView */
+QGraphicsView {
+    background-color: #dcdcdc;
+    border: 1px solid #a0a0a0;
+}
+
+/* Tooltip */
+QToolTip {
+    background-color: #c0c0c0;
+    color: #202020;
+    border: 1px solid #808080;
+}
