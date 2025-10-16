@@ -1,8 +1,100 @@
 from PyQt5 import QtWidgets
 from designer_window import DesignerWindow
 
+
+dark_stylesheet = """
+/* 전체 위젯 배경 & 기본 글자 색상 */
+QWidget {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* 그룹박스 */
+QGroupBox {
+    background-color: #1e1e1e;
+    border: 1px solid #3a3a3a;
+    margin-top: 10px;
+    padding: 5px;
+}
+QGroupBox:title {
+    subcontrol-origin: margin;
+    left: 5px;
+    padding: 0 3px 0 3px;
+    color: #ffffff;
+}
+
+/* 라벨 */
+QLabel {
+    color: #ffffff;
+}
+
+/* 버튼 */
+QPushButton {
+    background-color: #1f1f1f;
+    border: 1px solid #3a3a3a;
+    padding: 5px;
+    border-radius: 3px;
+}
+QPushButton:hover {
+    background-color: #333333;
+}
+QPushButton:pressed {
+    background-color: #444444;
+}
+
+/* 리스트 위젯 */
+QListWidget {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #3a3a3a;
+}
+QListWidget::item:selected {
+    background-color: #3a3a3a;
+}
+
+/* LineEdit, ComboBox 등 입력창 */
+QLineEdit, QComboBox, QTextEdit {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #3a3a3a;
+}
+
+/* ScrollBar */
+QScrollBar:vertical {
+    background: #1e1e1e;
+    width: 12px;
+    margin: 0px 0px 0px 0px;
+}
+QScrollBar::handle:vertical {
+    background: #3a3a3a;
+    min-height: 20px;
+    border-radius: 5px;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+/* GraphicsView */
+QGraphicsView {
+    background-color: #121212;
+    border: 1px solid #3a3a3a;
+}
+
+/* Tooltip */
+QToolTip {
+    background-color: #333333;
+    color: white;
+    border: 1px solid white;
+}
+"""
+
+
+
 def main():
     app = QtWidgets.QApplication([])
+    
+    app.setStyleSheet(dark_stylesheet)
+
     win = DesignerWindow()
     win.show()
     app.exec_()
