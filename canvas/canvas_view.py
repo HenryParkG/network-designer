@@ -1,5 +1,4 @@
-from PyQt5 import QtWidgets, QtCore
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 
 class CanvasView(QtWidgets.QGraphicsView):
     def __init__(self, scene, parent_window):

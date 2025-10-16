@@ -6,7 +6,6 @@ from canvas.canvas_view import CanvasView
 from palette.palette_widget import PaletteListWidget
 from utils.export_utils import export_to_pytorch
 from utils.save_load_utils import save_design_json, load_design_json
-from utils.validate_network import validate_network
 
 class DesignerWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -48,43 +47,32 @@ class DesignerWindow(QtWidgets.QMainWindow):
         right_layout.addWidget(self.sequence_list, 1)
 
         # Buttons
-        self.btn_export = QtWidgets.QPushButton("Export PyTorch Code")
-        self.btn_export.clicked.connect(self.export_code)
-        self.btn_save = QtWidgets.QPushButton("Save Design (.json)")
-        self.btn_save.clicked.connect(self.save_design)
-        self.btn_load = QtWidgets.QPushButton("Load Design (.json)")
-        self.btn_load.clicked.connect(self.load_design)
-        self.btn_clear = QtWidgets.QPushButton("Clear Canvas")
-        self.btn_clear.clicked.connect(self.clear_canvas)
-        self.btn_connect = QtWidgets.QPushButton("Connect Layers")
-        self.btn_connect.clicked.connect(self.connect_layers)
+        btn_export = QtWidgets.QPushButton("Export PyTorch Code")
+        btn_export.clicked.connect(self.export_code)
+        btn_save = QtWidgets.QPushButton("Save Design (.json)")
+        btn_save.clicked.connect(self.save_design)
+        btn_load = QtWidgets.QPushButton("Load Design (.json)")
+        btn_load.clicked.connect(self.load_design)
+        btn_clear = QtWidgets.QPushButton("Clear Canvas")
+        btn_clear.clicked.connect(self.clear_canvas)
+        btn_connect = QtWidgets.QPushButton("Connect Layers")
+        btn_connect.clicked.connect(self.connect_layers_dialog)
 
         row1 = QtWidgets.QHBoxLayout()
-        row1.addWidget(self.btn_export)
-        row1.addWidget(self.btn_save)
+        row1.addWidget(btn_export)
+        row1.addWidget(btn_save)
         row2 = QtWidgets.QHBoxLayout()
-        row2.addWidget(self.btn_load)
-        row2.addWidget(self.btn_clear)
+        row2.addWidget(btn_load)
+        row2.addWidget(btn_clear)
         row3 = QtWidgets.QHBoxLayout()
-        row3.addWidget(self.btn_connect)
+        row3.addWidget(btn_connect)
         right_layout.addLayout(row1)
         right_layout.addLayout(row2)
         right_layout.addLayout(row3)
         right_layout.addStretch()
         h.addWidget(right_box, 2)
 
-        self.btn_export.setEnabled(False)
-        self.btn_save.setEnabled(False)
-        self.btn_connect.setEnabled(True)
-
         self.sequence_list.itemClicked.connect(self._on_sequence_item_clicked)
-        
-        # CanvasView 생성 및 속성으로 저장
-        self.canvas = CanvasView()
-        self.setCentralWidget(self.canvas)
-
-        # Scene에서 DesignerWindow 참조 가능하게
-        self.canvas.scene().parent_widget = self
 
     # ---------------- Layer Add/Edit ----------------
     def add_layer(self, layer_type, pos):
@@ -120,56 +108,46 @@ class DesignerWindow(QtWidgets.QMainWindow):
                 self.layer_items[uid].setPos(x_offset, y_offset + idx * y_gap)
 
     def update_sequence_from_positions(self):
-        # Y 좌표 기준으로 정렬
+        # Y 좌표 기준으로 시퀀스 갱신
         items = sorted(self.layer_items.values(), key=lambda i: i.pos().y())
         self.sequence_list.clear()
         for item in items:
             li = QtWidgets.QListWidgetItem(f"{item.layer_type} #{item.uid}")
             li.setData(QtCore.Qt.UserRole, item.uid)
             self.sequence_list.addItem(li)
-        self.update_connections()  # Edge 갱신
+        self.update_connections()
 
     # ---------------- Connections ----------------
-    def connect_layers(self):
-            # Canvas에서 레이어 간 연결 수행
-            self.create_connections_from_sequence()
-
-            # 연결 검증
-            valid, msg = validate_network(self.layer_items, self.sequence_list)
-            if not valid:
-                QtWidgets.QMessageBox.warning(self, "Connection Failed", msg)
-                return
-            
-            # 연결 성공 → Save / Export 버튼 활성화
-            self.btn_save.setEnabled(True)
-            self.btn_export.setEnabled(True)
-            QtWidgets.QMessageBox.information(self, "Connection Success", "레이어 연결이 완료되었습니다.")
-
-    def create_connections_from_sequence(self):
+    def connect_layers_dialog(self):
         items = [self.sequence_list.item(i) for i in range(self.sequence_list.count())]
         if len(items) < 2:
             return
 
-        # 기존 connections 초기화
+        # 1. 기존 connections 초기화
         for layer in self.layer_items.values():
             layer.connections = []
 
-        for i in range(len(items) - 1):
-            src_uid = items[i].data(QtCore.Qt.UserRole)
-            tgt_uid = items[i+1].data(QtCore.Qt.UserRole)
-            src_item = self.layer_items[src_uid]
-            tgt_item = self.layer_items[tgt_uid]
+        # 2. sequence_list 순서대로 connections 생성
+        uids = [it.data(QtCore.Qt.UserRole) for it in items]
+        for i in range(len(uids) - 1):
+            src = self.layer_items[uids[i]]
+            tgt = self.layer_items[uids[i + 1]]
+            if tgt.uid not in src.connections:
+                src.connections.append(tgt.uid)
 
-            # 연결 갱신
-            src_item.connections.append(tgt_uid)
+        # 3. Edge 갱신
+        self.update_connections()
 
-            # Canvas Edge 생성
-            self.canvas.add_edge(src_item, tgt_item)
-            
     def update_connections(self):
-        for e in self.edges: self.scene.removeItem(e)
+    # 1. 기존 EdgeItem 제거
+        for e in self.edges:
+            self.scene.removeItem(e)
         self.edges = []
+
+        # 2. LayerItem connections 기준으로 새 EdgeItem 생성
         for uid, item in self.layer_items.items():
+            # connections 초기화 필요 시 uncomment
+            # item.connections = []
             for tgt_uid in item.connections:
                 if tgt_uid in self.layer_items:
                     e = EdgeItem(item, self.layer_items[tgt_uid])
@@ -181,14 +159,7 @@ class DesignerWindow(QtWidgets.QMainWindow):
         export_to_pytorch(self.layer_items, self.sequence_list)
 
     def save_design(self):
-        # Save 클릭 시 재검증
-        valid, msg = validate_network(self.layer_items, self.sequence_list)
-        if not valid:
-            QtWidgets.QMessageBox.warning(self, "Validation Failed", msg)
-            return
         save_design_json(self.layer_items, self.sequence_list)
-        QtWidgets.QMessageBox.information(self, "Saved", "신경망 구조가 저장되었습니다.")
-
 
     def load_design(self):
         load_design_json(self)
@@ -198,13 +169,3 @@ class DesignerWindow(QtWidgets.QMainWindow):
         self.layer_items.clear()
         self.edges.clear()
         self.sequence_list.clear()
-
-
-    def on_canvas_changed(self):
-        """
-        Canvas에서 레이어 이동/연결 변경 시 호출
-        Save / Export 버튼 비활성화
-        """
-        self.btn_save.setEnabled(False)
-        self.btn_export.setEnabled(False)
-        
