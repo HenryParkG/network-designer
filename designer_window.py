@@ -1,3 +1,4 @@
+# Description: Main window for the PyTorch NN Designer application with tabbed interface.
 from PyQt5 import QtWidgets, QtCore
 from layers.layer_item import LayerItem
 from layers.edge_item import EdgeItem
@@ -7,6 +8,7 @@ from palette.palette_widget import PaletteListWidget
 from utils.export_utils import export_to_pytorch
 from utils.save_load_utils import save_design_json, load_design_json
 
+# tabs 모듈 임포트
 from tabs.design_tab import DesignTab
 from tabs.dataset_tab import DatasetTab
 from tabs.config_tab import ConfigTab 

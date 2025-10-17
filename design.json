@@ -1,0 +1,56 @@
+{
+  "layers": [
+    {
+      "uid": 1,
+      "type": "Linear",
+      "params": {
+        "in_features": 128,
+        "out_features": 64,
+        "bias": true
+      },
+      "pos": [
+        51.0,
+        405.0
+      ],
+      "connections": [
+        2
+      ]
+    },
+    {
+      "uid": 2,
+      "type": "Conv2d",
+      "params": {
+        "in_channels": 3,
+        "out_channels": 16,
+        "kernel_size": 3,
+        "stride": 1,
+        "padding": 0,
+        "bias": true
+      },
+      "pos": [
+        61.0,
+        560.0
+      ],
+      "connections": []
+    },
+    {
+      "uid": 3,
+      "type": "ReLU",
+      "params": {
+        "inplace": false
+      },
+      "pos": [
+        50.0,
+        250.0
+      ],
+      "connections": [
+        1
+      ]
+    }
+  ],
+  "sequence": [
+    3,
+    1,
+    2
+  ]
+}

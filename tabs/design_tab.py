@@ -50,6 +50,9 @@ class DesignTab(QtWidgets.QWidget):
 
         # Connect model signals (use a single handler that accepts *args)
         model = self.sequence_list.model()
+        self.sequence_list.model().rowsMoved.connect(self.on_sequence_reordered)
+        self.sequence_list.model().rowsMoved.connect(self.update_sequence_from_positions)
+
         model.rowsMoved.connect(self.on_sequence_reordered)
         model.rowsInserted.connect(self.on_sequence_reordered)
         model.rowsRemoved.connect(self.on_sequence_reordered)
@@ -153,7 +156,7 @@ class DesignTab(QtWidgets.QWidget):
             QtWidgets.QMessageBox.warning(self, "Connection Failed", msg)
             return
 
-        self.update_connections()
+        self.update_sequence_from_positions()
         self.btn_save.setEnabled(True)
         self.btn_export.setEnabled(True)
         QtWidgets.QMessageBox.information(self, "Connection Success", "레이어 연결이 완료되었습니다.")
@@ -185,42 +188,48 @@ class DesignTab(QtWidgets.QWidget):
             li = QtWidgets.QListWidgetItem(f"{item.layer_type} #{item.uid}")
             li.setData(QtCore.Qt.UserRole, item.uid)
             self.sequence_list.addItem(li)
+            
+        uids = [self.sequence_list.item(i).data(QtCore.Qt.UserRole) for i in range(self.sequence_list.count())]
+        print("Updated sequence:", uids)
 
         # 연결 갱신
         self.update_connections()
+        
+    def update_sequence_connections_only(self):
+        """SequenceList 순서를 기준으로 connections만 갱신 (Edge는 그대로)"""
+        uids = [self.sequence_list.item(i).data(QtCore.Qt.UserRole) for i in range(self.sequence_list.count())]
+
+        for layer in self.layer_items.values():
+            layer.connections = []
+
+        for i in range(len(uids) - 1):
+            self.layer_items[uids[i]].connections = [uids[i + 1]]
 
 
     # unified handler for various model signals (drag/drop, layout change 등)
     def on_sequence_reordered(self, *args):
-        """
-        rowsMoved / rowsInserted / rowsRemoved / layoutChanged 등에서 호출됩니다.
-        *args를 받도록 해서 시그널 시그니처 차이를 무시합니다.
-        """
-        # ensure sequence list order becomes authoritative
-        uids = []
-        for i in range(self.sequence_list.count()):
-            data = self.sequence_list.item(i).data(QtCore.Qt.UserRole)
-            try:
-                uids.append(int(data))
-            except Exception:
-                uids.append(data)
+        uids = [self.sequence_list.item(i).data(QtCore.Qt.UserRole) for i in range(self.sequence_list.count())]
 
         # reset connections and rebuild according to list order
         for layer in self.layer_items.values():
             layer.connections = []
 
         for i in range(len(uids) - 1):
-            if uids[i] in self.layer_items and uids[i+1] in self.layer_items:
-                self.layer_items[uids[i]].connections = [uids[i+1]]
+            self.layer_items[uids[i]].connections = [uids[i+1]]
 
         # rebuild edges
         self.update_connections()
 
+
     # ---------------- Export / Save / Load ----------------
     def export_code(self):
+        QtWidgets.QApplication.processEvents()
+        self.update_sequence_connections_only()  # 최신 connections 반영
         export_to_pytorch(self.layer_items, self.sequence_list)
 
     def save_design(self):
+        QtWidgets.QApplication.processEvents()
+        self.update_sequence_connections_only()
         save_design_json(self.layer_items, self.sequence_list)
 
     def load_design(self):
