@@ -80,3 +80,33 @@ QToolTip {
     color: white;
     border: 1px solid white;
 }
+
+QTabWidget::pane {
+    border: 1px solid #3a3a3a;
+    background-color: #1e1e1e;
+}
+
+QTabBar::tab {
+    background: #2a2a2a;
+    color: #ffffff;
+    padding: 8px 18px;
+    border: 1px solid #3a3a3a;
+    border-bottom: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    margin-right: 2px;
+}
+
+QTabBar::tab:selected {
+    background: #4c4c4c;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+QTabBar::tab:hover {
+    background: #3a3a3a;
+}
+
+QTabBar::tab:!selected {
+    margin-top: 2px;
+}

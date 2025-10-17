@@ -1,4 +1,6 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtWidgets import QGraphicsRectItem
+from PyQt5.QtCore import Qt
 
 class LayerItem(QtWidgets.QGraphicsRectItem):
     WIDTH, HEIGHT = 180, 60
@@ -78,8 +80,12 @@ class LayerItem(QtWidgets.QGraphicsRectItem):
         self.text_item.setText(self._display_text())
 
     def itemChange(self, change, value):
-        if change == QtWidgets.QGraphicsItem.ItemPositionChange:
-            if hasattr(self.scene(), "parent_widget"):
-                # 박스 위치 변경 시 Sequence 갱신 + Edge 갱신
-                self.scene().parent_widget.update_sequence_from_positions()
+        if change == QGraphicsRectItem.ItemPositionChange:
+            if hasattr(self.scene(), "parent_tab"):
+                # 이동 중에도 Edge 업데이트
+                self.scene().parent_tab.update_connections()
+        elif change == QGraphicsRectItem.ItemPositionHasChanged:
+            if hasattr(self.scene(), "parent_tab"):
+                # 드래그 끝나면 SequenceList 갱신
+                self.scene().parent_tab.update_sequence_from_positions()
         return super().itemChange(change, value)
