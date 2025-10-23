@@ -1,4 +1,3 @@
-# tabs/design_tab.py
 from PyQt5 import QtWidgets, QtCore
 from palette.palette_widget import PaletteListWidget
 from canvas.canvas_view import CanvasView
@@ -23,12 +22,183 @@ class DesignTab(QtWidgets.QWidget):
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
 
-        # ---------------- Palette ----------------
+        # ---------------- Palette (위) + Predefined Models (아래) ----------------
         palette_box = QtWidgets.QGroupBox("Layer Palette")
         palette_layout = QtWidgets.QVBoxLayout(palette_box)
+
+        # Palette List (상단, 높이 비율 3)
         self.palette_list = PaletteListWidget()
-        palette_layout.addWidget(self.palette_list)
+        palette_layout.addWidget(self.palette_list, 3)
+
+        # Predefined Models (하단, 높이 비율 2)
+        predefined_box = QtWidgets.QGroupBox("Predefined Models")
+        predefined_layout = QtWidgets.QVBoxLayout(predefined_box)
+
+        self.predefined_list = QtWidgets.QListWidget()
+        self.predefined_list.setDragDropMode(QtWidgets.QAbstractItemView.NoDragDrop)
+        self.predefined_list.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+
+        # 미리 정의된 모델 템플릿
+        self.PREDEFINED_MODELS = {
+            # LeNet-5 (MNIST)
+            "LeNet-5": [
+                {"type": "Conv2d", "params": {"in_channels": 1, "out_channels": 6, "kernel_size": 5}},
+                {"type": "ReLU", "params": {}},
+                {"type": "AvgPool2d", "params": {"kernel_size": 2, "stride": 2}},
+                {"type": "Conv2d", "params": {"in_channels": 6, "out_channels": 16, "kernel_size": 5}},
+                {"type": "ReLU", "params": {}},
+                {"type": "AvgPool2d", "params": {"kernel_size": 2, "stride": 2}},
+                {"type": "Flatten", "params": {}},
+                {"type": "Linear", "params": {"in_features": 16*4*4, "out_features": 120}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Linear", "params": {"in_features": 120, "out_features": 84}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Linear", "params": {"in_features": 84, "out_features": 10}}
+            ],
+
+            # AlexNet (ImageNet) - full sequential version
+            "AlexNet": [
+                {"type": "Conv2d", "params": {"in_channels": 3, "out_channels": 96, "kernel_size": 11, "stride": 4, "padding": 0}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 3, "stride": 2}},
+
+                {"type": "Conv2d", "params": {"in_channels": 96, "out_channels": 256, "kernel_size": 5, "stride": 1, "padding": 2}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 3, "stride": 2}},
+
+                {"type": "Conv2d", "params": {"in_channels": 256, "out_channels": 384, "kernel_size": 3, "stride": 1, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 384, "out_channels": 384, "kernel_size": 3, "stride": 1, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 384, "out_channels": 256, "kernel_size": 3, "stride": 1, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 3, "stride": 2}},
+
+                {"type": "Flatten", "params": {}},
+                {"type": "Linear", "params": {"in_features": 256*6*6, "out_features": 4096}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Dropout", "params": {"p": 0.5}},
+                {"type": "Linear", "params": {"in_features": 4096, "out_features": 4096}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Dropout", "params": {"p": 0.5}},
+                {"type": "Linear", "params": {"in_features": 4096, "out_features": 1000}}
+            ],
+
+            # VGG16 (ImageNet) - full
+            "VGG16": [
+                {"type": "Conv2d", "params": {"in_channels": 3, "out_channels": 64, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 64, "out_channels": 64, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 2, "stride": 2}},
+
+                {"type": "Conv2d", "params": {"in_channels": 64, "out_channels": 128, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 128, "out_channels": 128, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 2, "stride": 2}},
+
+                {"type": "Conv2d", "params": {"in_channels": 128, "out_channels": 256, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 256, "out_channels": 256, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 256, "out_channels": 256, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 2, "stride": 2}},
+
+                {"type": "Conv2d", "params": {"in_channels": 256, "out_channels": 512, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 512, "out_channels": 512, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 512, "out_channels": 512, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 2, "stride": 2}},
+
+                {"type": "Conv2d", "params": {"in_channels": 512, "out_channels": 512, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 512, "out_channels": 512, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": 512, "out_channels": 512, "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 2, "stride": 2}},
+
+                {"type": "Flatten", "params": {}},
+                {"type": "Linear", "params": {"in_features": 512*7*7, "out_features": 4096}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Dropout", "params": {"p": 0.5}},
+                {"type": "Linear", "params": {"in_features": 4096, "out_features": 4096}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Dropout", "params": {"p": 0.5}},
+                {"type": "Linear", "params": {"in_features": 4096, "out_features": 1000}}
+            ],
+
+            # ResNet-18 (ImageNet) - represented with block placeholders
+            # Note: residual connections are represented here as "ResidualBlock" items
+            # which assume your system supports a ResidualBlock type that expands into the
+            # appropriate sequence of convolutions + skip connections when exported.
+            "ResNet-18": [
+                {"type": "Conv2d", "params": {"in_channels": 3, "out_channels": 64, "kernel_size": 7, "stride": 2, "padding": 3}},
+                {"type": "BatchNorm2d", "params": {"num_features": 64}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 3, "stride": 2, "padding": 1}},
+
+                {"type": "ResidualBlock", "params": {"in_channels": 64, "out_channels": 64, "stride": 1, "repeats": 2}},
+                {"type": "ResidualBlock", "params": {"in_channels": 64, "out_channels": 128, "stride": 2, "repeats": 2}},
+                {"type": "ResidualBlock", "params": {"in_channels": 128, "out_channels": 256, "stride": 2, "repeats": 2}},
+                {"type": "ResidualBlock", "params": {"in_channels": 256, "out_channels": 512, "stride": 2, "repeats": 2}},
+
+                {"type": "AdaptiveAvgPool2d", "params": {"output_size": (1, 1)}},
+                {"type": "Flatten", "params": {}},
+                {"type": "Linear", "params": {"in_features": 512, "out_features": 1000}}
+            ],
+
+            # GoogLeNet / Inception-v1 - represented with Inception module placeholders
+            # Each Inception entry assumes your system can expand an "Inception" module
+            # into its internal branches when exporting. If not supported, consider adding
+            # custom Inception layer handling in export_utils.
+            "GoogLeNet": [
+                {"type": "Conv2d", "params": {"in_channels": 3, "out_channels": 64, "kernel_size": 7, "stride": 2, "padding": 3}},
+                {"type": "ReLU", "params": {}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 3, "stride": 2, "padding": 1}},
+                {"type": "Conv2d", "params": {"in_channels": 64, "out_channels": 64, "kernel_size": 1}},
+                {"type": "Conv2d", "params": {"in_channels": 64, "out_channels": 192, "kernel_size": 3, "padding": 1}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 3, "stride": 2, "padding": 1}},
+
+                {"type": "Inception", "params": {"in_channels": 192, "out_1x1": 64, "out_3x3_reduce": 96, "out_3x3": 128, "out_5x5_reduce": 16, "out_5x5": 32, "out_pool_proj": 32}},
+                {"type": "Inception", "params": {"in_channels": 256, "out_1x1": 128, "out_3x3_reduce": 128, "out_3x3": 192, "out_5x5_reduce": 32, "out_5x5": 96, "out_pool_proj": 64}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 3, "stride": 2, "padding": 1}},
+
+                {"type": "Inception", "params": {"in_channels": 480, "out_1x1": 192, "out_3x3_reduce": 96, "out_3x3": 208, "out_5x5_reduce": 16, "out_5x5": 48, "out_pool_proj": 64}},
+                {"type": "Inception", "params": {"in_channels": 512, "out_1x1": 160, "out_3x3_reduce": 112, "out_3x3": 224, "out_5x5_reduce": 24, "out_5x5": 64, "out_pool_proj": 64}},
+                {"type": "Inception", "params": {"in_channels": 512, "out_1x1": 128, "out_3x3_reduce": 128, "out_3x3": 256, "out_5x5_reduce": 24, "out_5x5": 64, "out_pool_proj": 64}},
+                {"type": "Inception", "params": {"in_channels": 512, "out_1x1": 112, "out_3x3_reduce": 144, "out_3x3": 288, "out_5x5_reduce": 32, "out_5x5": 64, "out_pool_proj": 64}},
+                {"type": "Inception", "params": {"in_channels": 528, "out_1x1": 256, "out_3x3_reduce": 160, "out_3x3": 320, "out_5x5_reduce": 32, "out_5x5": 128, "out_pool_proj": 128}},
+                {"type": "MaxPool2d", "params": {"kernel_size": 3, "stride": 2, "padding": 1}},
+
+                {"type": "Inception", "params": {"in_channels": 832, "out_1x1": 256, "out_3x3_reduce": 160, "out_3x3": 320, "out_5x5_reduce": 32, "out_5x5": 128, "out_pool_proj": 128}},
+                {"type": "Inception", "params": {"in_channels": 832, "out_1x1": 384, "out_3x3_reduce": 192, "out_3x3": 384, "out_5x5_reduce": 48, "out_5x5": 128, "out_pool_proj": 128}},
+
+                {"type": "AdaptiveAvgPool2d", "params": {"output_size": (1, 1)}},
+                {"type": "Flatten", "params": {}},
+                {"type": "Linear", "params": {"in_features": 1024, "out_features": 1000}}
+            ],
+        }
+
+        # 리스트에 모델 이름 추가
+        for model_name in self.PREDEFINED_MODELS.keys():
+            item = QtWidgets.QListWidgetItem(model_name)
+            self.predefined_list.addItem(item)
+
+        predefined_layout.addWidget(self.predefined_list)
+        predefined_layout.addStretch()
+        predefined_box.setLayout(predefined_layout)
+
+        # Palette 레이아웃 안에 Predefined Models를 추가 (Palette 밑에 위치)
+        palette_layout.addWidget(predefined_box, 2)
         palette_layout.addStretch()
+        palette_box.setLayout(palette_layout)
+
+        # 외부 레이아웃에는 palette_box 하나만 추가
         layout.addWidget(palette_box, 1)
 
         # ---------------- Canvas ----------------
@@ -85,6 +255,7 @@ class DesignTab(QtWidgets.QWidget):
 
         # 시그널 연결
         self.sequence_list.itemClicked.connect(self._on_sequence_item_clicked)
+        self.predefined_list.itemDoubleClicked.connect(self.add_predefined_model_to_canvas)
         self.btn_connect.clicked.connect(self.connect_layers_dialog)
         self.btn_clear.clicked.connect(self.clear_canvas)
         self.btn_save.clicked.connect(self.save_design)
@@ -92,19 +263,13 @@ class DesignTab(QtWidgets.QWidget):
         self.btn_export.clicked.connect(self.export_code)
 
     # ---------------- Layer Add/Edit ----------------
-    def add_layer(self, layer_type, pos):
-        """팔레트에서 드롭될 때 호출되는 레이어 추가 함수"""
-        # validate template
-        if layer_type not in LAYER_TEMPLATES:
-            QtWidgets.QMessageBox.warning(self, "Add Layer", f"Unknown layer type: {layer_type}")
-            return
-
+    def add_layer(self, layer_type, pos, params=None):
+        if params is None:
+            params = LAYER_TEMPLATES.get(layer_type, {}).get("params", {})
         self.layer_uid += 1
         uid = self.layer_uid
-        params = LAYER_TEMPLATES[layer_type].get("params", {})
         item = LayerItem(layer_type, params, uid)
         item.setPos(pos)
-        # make sure item has connections attr
         if not hasattr(item, "connections"):
             item.connections = []
         self.scene.addItem(item)
@@ -116,6 +281,7 @@ class DesignTab(QtWidgets.QWidget):
 
         self.auto_layout()
         self.update_connections()
+
 
     def _on_sequence_item_clicked(self, list_item):
         uid = list_item.data(QtCore.Qt.UserRole)
@@ -241,3 +407,100 @@ class DesignTab(QtWidgets.QWidget):
         self.layer_items.clear()
         self.edges.clear()
         self.sequence_list.clear()
+
+    # ---------------- Predefined 모델 추가 함수 ----------------
+    def _expand_placeholder(self, layer_def):
+        """플레이스홀더 모듈(ResidualBlock, Inception 등)을 표준 레이어 시퀀스로 전개해서 반환한다.
+        전개할 수 없는 경우에는 원래 정의를 리스트로 감싸서 반환.
+        """
+        t = layer_def.get("type")
+        params = layer_def.get("params", {})
+
+        if t == "Inception":
+            # Inception 모듈을 단일 시퀀스로 근사 (브랜치 병합은 지원하지 않으므로 순차적으로 배치)
+            in_ch = params.get("in_channels", 192)
+            return [
+                {"type": "Conv2d", "params": {"in_channels": in_ch, "out_channels": params.get("out_1x1", 64), "kernel_size": 1}},
+                {"type": "ReLU", "params": {}},
+
+                {"type": "Conv2d", "params": {"in_channels": in_ch, "out_channels": params.get("out_3x3_reduce", 96), "kernel_size": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": params.get("out_3x3_reduce", 96), "out_channels": params.get("out_3x3", 128), "kernel_size": 3, "padding": 1}},
+                {"type": "ReLU", "params": {}},
+
+                {"type": "Conv2d", "params": {"in_channels": in_ch, "out_channels": params.get("out_5x5_reduce", 16), "kernel_size": 1}},
+                {"type": "ReLU", "params": {}},
+                {"type": "Conv2d", "params": {"in_channels": params.get("out_5x5_reduce", 16), "out_channels": params.get("out_5x5", 32), "kernel_size": 5, "padding": 2}},
+                {"type": "ReLU", "params": {}},
+
+                {"type": "MaxPool2d", "params": {"kernel_size": 3, "stride": 1, "padding": 1}},
+                {"type": "Conv2d", "params": {"in_channels": in_ch, "out_channels": params.get("out_pool_proj", 32), "kernel_size": 1}},
+                {"type": "ReLU", "params": {}},
+            ]
+
+        if t == "ResidualBlock":
+            # Residual block을 두 개의 conv-block 시퀀스로 전개 (skip-connection은 export 단계에서 처리 권장)
+            in_ch = params.get("in_channels", 64)
+            out_ch = params.get("out_channels", 64)
+            stride = params.get("stride", 1)
+            repeats = params.get("repeats", 1)
+            seq = []
+            for r in range(repeats):
+                seq.extend([
+                    {"type": "Conv2d", "params": {"in_channels": in_ch, "out_channels": out_ch, "kernel_size": 3, "stride": stride, "padding": 1}},
+                    {"type": "BatchNorm2d", "params": {"num_features": out_ch}},
+                    {"type": "ReLU", "params": {}},
+                    {"type": "Conv2d", "params": {"in_channels": out_ch, "out_channels": out_ch, "kernel_size": 3, "stride": 1, "padding": 1}},
+                    {"type": "BatchNorm2d", "params": {"num_features": out_ch}},
+                    {"type": "ReLU", "params": {}},
+                ])
+                in_ch = out_ch
+                stride = 1
+            return seq
+
+        # 기본: 변경 없음
+        return [layer_def]
+
+    def add_predefined_model_to_canvas(self, list_item):
+        model_name = list_item.text()
+        layers = self.PREDEFINED_MODELS.get(model_name, [])
+        if not layers:
+            QtWidgets.QMessageBox.warning(self, "Predefined Model", f"No template for {model_name}")
+            return
+
+        x_offset = 50
+        y_offset = 50 + self.sequence_list.count() * 100
+
+        # 각 정의를 전개(expand)하여 실제 레이어 시퀀스를 만든다
+        expanded_layers = []
+        for layer_def in layers:
+            expanded = self._expand_placeholder(layer_def)
+            expanded_layers.extend(expanded)
+
+        for layer_def in expanded_layers:
+            layer_type = layer_def.get("type")
+            params = layer_def.get("params", {})
+
+            # 만약 LAYER_TEMPLATES에 타입이 없다면, 기본 템플릿으로 빈 params 사용
+            if layer_type not in LAYER_TEMPLATES:
+                # 일부 레이어(Flatten, Dropout 등)는 템플릿에 없을 수 있으니 허용
+                # LAYER_TEMPLATES가 필요로 하는 키가 있다면 export 시 에러가 날 수 있음
+                pass
+
+            self.layer_uid += 1
+            uid = self.layer_uid
+            item = LayerItem(layer_type, params, uid)
+            item.setPos(x_offset, y_offset)
+            if not hasattr(item, "connections"):
+                item.connections = []
+            self.scene.addItem(item)
+            self.layer_items[uid] = item
+
+            li = QtWidgets.QListWidgetItem(f"{layer_type} #{uid}")
+            li.setData(QtCore.Qt.UserRole, uid)
+            self.sequence_list.addItem(li)
+
+            y_offset += 100  # 다음 레이어 아래로
+
+        self.auto_layout()
+        self.update_connections()
