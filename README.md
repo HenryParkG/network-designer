@@ -1,8 +1,8 @@
 # network-designer
 
-
 Network Designer는 그래픽 기반으로 신경망 구조를 설계하고, PyTorch 코드로 바로 변환할 수 있는 데스크톱 애플리케이션입니다.  
-사용자는 드래그 앤 드롭 방식으로 레이어를 캔버스에 배치하고, 레이어 간 연결을 시각적으로 구성할 수 있습니다.  
+사용자는 드래그 앤 드롭 방식으로 레이어를 캔버스에 배치하고, 레이어 간 연결을 시각적으로 구성할 수 있습니다. 
+ 
 <img width="1396" height="827" alt="image" src="https://github.com/user-attachments/assets/9ba67c87-a915-4ab9-ae3c-3fcc5a192914" />
 
 

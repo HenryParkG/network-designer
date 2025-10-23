@@ -12,6 +12,7 @@ from utils.save_load_utils import save_design_json, load_design_json
 from tabs.design_tab import DesignTab
 from tabs.dataset_tab import DatasetTab
 from tabs.config_tab import ConfigTab 
+from tabs.setting_tab import SettingsTab 
 
 # -------------------- 메인 윈도우 --------------------
 class DesignerWindow(QtWidgets.QMainWindow):
@@ -40,12 +41,15 @@ class DesignerWindow(QtWidgets.QMainWindow):
         self.config_tab = ConfigTab(self)
         self.tabs.addTab(self.config_tab, "Config Tab")
 
+        # 4 Setting 탭 (자리만)
+        self.setting_tab = SettingsTab(self)
+        self.tabs.addTab(self.setting_tab, "Setting Tab")
+        
         # 참조를 DesignTab 내부 위젯과 연결
         self.scene = self.design_tab.scene
         self.sequence_list = self.design_tab.sequence_list
         self.palette_list = self.design_tab.palette_list
         self.view = self.design_tab.view
-        
         
         # ---- 상태 표시줄 (Footer) ----
         self.status_bar = QtWidgets.QStatusBar()
