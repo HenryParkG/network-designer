@@ -1,3 +1,4 @@
+# 미리 정의된 신경망 모델 아키텍처 모음
 PREDEFINED_MODELS={
     # LeNet-5 (MNIST)
     "LeNet-5": [

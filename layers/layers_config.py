@@ -1,4 +1,4 @@
-# 레이어 템플릿 정의
+# 레이어 템플릿 정의 파일
 LAYER_TEMPLATES = {
     "Linear": {"class":"nn.Linear","params":{"in_features":128,"out_features":64,"bias":True},"friendly":"Linear(in,out)"},
     "Conv2d": {"class":"nn.Conv2d","params":{"in_channels":3,"out_channels":16,"kernel_size":3,"stride":1,"padding":0,"bias":True},"friendly":"Conv2d(Cin,Cout,k)"},

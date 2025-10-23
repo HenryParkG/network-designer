@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "data"))
+
 from PyQt5 import QtWidgets, QtCore
 from palette.palette_widget import PaletteListWidget
 from canvas.canvas_view import CanvasView
@@ -7,10 +11,6 @@ from layers.layers_config import LAYER_TEMPLATES
 from utils.export_utils import export_to_pytorch
 from utils.save_load_utils import save_design_json, load_design_json
 from utils.validate_network import validate_network
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", "data"))
-
 from data.predefined_model import PREDEFINED_MODELS
 
 class DesignTab(QtWidgets.QWidget):
