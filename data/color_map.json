@@ -1,0 +1,13 @@
+{
+    "Linear": "#FFD966",
+    "Conv2d": "#6FA8DC",
+    "ReLU": "#93C47D",
+    "Flatten": "#B4A7D6",
+    "Dropout": "#F4CCCC",
+    "BatchNorm2d": "#D9D2E9",
+    "MaxPool2d": "#FFE599",
+    "AvgPool2d": "#9FC5E8",
+    "LSTM": "#EA9999",
+    "Inception": "#F6B26B",
+    "ResidualBlock": "#B6D7A8"
+}

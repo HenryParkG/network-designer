@@ -2,23 +2,31 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QGraphicsRectItem
 from PyQt5.QtCore import Qt, QRectF, QPointF
 from PyQt5.QtGui import QPainterPath, QFontMetricsF, QFont
-
+import os
+import json
 
 class LayerItem(QtWidgets.QGraphicsRectItem):
     WIDTH, HEIGHT = 180, 60
-    COLOR_MAP = {
-        "Linear": "#FFD966",
-        "Conv2d": "#6FA8DC",
-        "ReLU": "#93C47D",
-        "Flatten": "#B4A7D6",
-        "Dropout": "#F4CCCC",
-        "BatchNorm2d": "#D9D2E9",
-        "MaxPool2d": "#FFE599",
-        "AvgPool2d": "#9FC5E8",
-        "LSTM": "#EA9999",
-        "Inception": "#F6B26B",
-        "ResidualBlock": "#B6D7A8",
-    }
+    COLOR_MAP_PATH = "data/color_map.json"
+
+    if os.path.exists(COLOR_MAP_PATH):
+        with open(COLOR_MAP_PATH, "r", encoding="utf-8") as f:
+            COLOR_MAP = json.load(f)
+    else:
+        COLOR_MAP = {}
+    # COLOR_MAP = {
+    #     "Linear": "#FFD966",
+    #     "Conv2d": "#6FA8DC",
+    #     "ReLU": "#93C47D",
+    #     "Flatten": "#B4A7D6",
+    #     "Dropout": "#F4CCCC",
+    #     "BatchNorm2d": "#D9D2E9",
+    #     "MaxPool2d": "#FFE599",
+    #     "AvgPool2d": "#9FC5E8",
+    #     "LSTM": "#EA9999",
+    #     "Inception": "#F6B26B",
+    #     "ResidualBlock": "#B6D7A8",
+    # }
 
     PLACEHOLDERS = ("Inception", "ResidualBlock", "ResBlock")
 
