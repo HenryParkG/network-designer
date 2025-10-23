@@ -3,16 +3,16 @@ from PyQt5 import QtWidgets, QtCore
 from layers.layer_item import LayerItem
 from layers.edge_item import EdgeItem
 from layers.layers_config import LAYER_TEMPLATES
-from canvas.canvas_view import CanvasView
-from palette.palette_widget import PaletteListWidget
+from ui.canvas.canvas_view import CanvasView
+from ui.palette.palette_widget import PaletteListWidget
 from utils.export_utils import export_to_pytorch
 from utils.save_load_utils import save_design_json, load_design_json
 
 # tabs 모듈 임포트
-from tabs.design_tab import DesignTab
-from tabs.dataset_tab import DatasetTab
-from tabs.config_tab import ConfigTab 
-from tabs.setting_tab import SettingsTab 
+from ui.tabs.design_tab import DesignTab
+from ui.tabs.dataset_tab import DatasetTab
+from ui.tabs.config_tab import ConfigTab 
+from ui.tabs.setting_tab import SettingsTab 
 
 # -------------------- 메인 윈도우 --------------------
 class DesignerWindow(QtWidgets.QMainWindow):

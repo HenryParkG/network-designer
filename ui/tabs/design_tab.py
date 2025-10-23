@@ -3,8 +3,8 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "data"))
 
 from PyQt5 import QtWidgets, QtCore
-from palette.palette_widget import PaletteListWidget
-from canvas.canvas_view import CanvasView
+from ui.palette.palette_widget import PaletteListWidget
+from ui.canvas.canvas_view import CanvasView
 from layers.layer_item import LayerItem
 from layers.edge_item import EdgeItem
 from layers.layers_config import LAYER_TEMPLATES
