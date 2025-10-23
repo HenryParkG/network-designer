@@ -2,16 +2,7 @@
 from PyQt5 import QtWidgets
 from designer_window import DesignerWindow
 
-# 테마 적용 함수
-def apply_theme(self, theme_name="dark"):
-    qss_file = {
-        "dark": "data/themes/dark_theme.qss",
-        "light": "data/themes/light_theme.qss",
-        "gray": "data/themes/gray_theme.qss"
-    }.get(theme_name, "themes/dark_theme.qss")
-
-    with open(qss_file, "r", encoding="utf-8") as f:
-        self.setStyleSheet(f.read())
+from utils.theme_utils import apply_theme
 
 # -------------------- 메인 애플리케이션 --------------------
 def main():
