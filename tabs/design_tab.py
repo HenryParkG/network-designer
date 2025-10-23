@@ -218,9 +218,12 @@ class DesignTab(QtWidgets.QWidget):
             
         uids = [self.sequence_list.item(i).data(QtCore.Qt.UserRole) for i in range(self.sequence_list.count())]
         print("Updated sequence:", uids)
-
+        
         # 연결 갱신
         self.update_connections()
+        self.layer_sequence = uids
+        self.layer_sequence = [self.sequence_list.item(i).data(QtCore.Qt.UserRole) 
+                            for i in range(self.sequence_list.count())]
         
     def update_sequence_connections_only(self):
         """SequenceList 순서를 기준으로 connections만 갱신 (Edge는 그대로)"""
@@ -252,12 +255,15 @@ class DesignTab(QtWidgets.QWidget):
     def export_code(self):
         QtWidgets.QApplication.processEvents()
         self.update_sequence_connections_only()  # 최신 connections 반영
-        export_to_pytorch(self.layer_items, self.sequence_list)
+        self.update_sequence_from_positions()     # this sets self.layer_sequence
+
+        export_to_pytorch(self.layer_items, self.layer_sequence)
 
     def save_design(self):
         QtWidgets.QApplication.processEvents()
         self.update_sequence_connections_only()
-        save_design_json(self.layer_items, self.sequence_list)
+        self.update_sequence_from_positions()
+        save_design_json(self.layer_items, self.layer_sequence)
 
     def load_design(self):
         load_design_json(self)
