@@ -1,4 +1,4 @@
-README.md
+# network-designer
 
 
 Network Designer는 그래픽 기반으로 신경망 구조를 설계하고, PyTorch 코드로 바로 변환할 수 있는 데스크톱 애플리케이션입니다.  
