@@ -30,19 +30,15 @@ class DesignerWindow(QtWidgets.QMainWindow):
 
         # 1️⃣ Network Design 탭
         self.design_tab = DesignTab(self)
-        self.tabs.addTab(self.design_tab, "Network Design")
+        self.tabs.addTab(self.design_tab, "Network Design Tab")
 
         # 2️⃣ Dataset 탭 (미리 자리만 만들어둠)
-        dataset_tab = QtWidgets.QWidget()
-        dataset_tab.setLayout(QtWidgets.QVBoxLayout())
-        dataset_tab.layout().addWidget(QtWidgets.QLabel("📂 Dataset 관리 탭 (추후 추가 예정)"))
-        self.tabs.addTab(dataset_tab, "Dataset")
+        self.dataset_tab = DatasetTab(self)
+        self.tabs.addTab(self.dataset_tab, "Dataset Tab")
 
         # 3️⃣ Training Config 탭 (자리만)
-        config_tab = QtWidgets.QWidget()
-        config_tab.setLayout(QtWidgets.QVBoxLayout())
-        config_tab.layout().addWidget(QtWidgets.QLabel("⚙️ Training Config 탭 (추후 추가 예정)"))
-        self.tabs.addTab(config_tab, "Training")
+        self.config_tab = ConfigTab(self)
+        self.tabs.addTab(self.config_tab, "Config Tab")
 
         # 참조를 DesignTab 내부 위젯과 연결
         self.scene = self.design_tab.scene

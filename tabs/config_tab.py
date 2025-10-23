@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtCore
 
 class ConfigTab(QtWidgets.QWidget):
     """모델 설정/하이퍼파라미터 탭"""
-    def __init__(self):
+    def __init__(self, parent_window=None):
         super().__init__()
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
