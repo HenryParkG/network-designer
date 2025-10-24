@@ -46,6 +46,18 @@ class DesignerWindow(QtWidgets.QMainWindow):
         self.setting_tab = SettingsTab(self)
         self.tabs.addTab(self.setting_tab, "Setting Tab")
         
+        # # 5 Setting 탭 (자리만)
+        # self.setting_tab = SettingsTab(self)
+        # self.tabs.addTab(self.setting_tab, "Setting Tab")
+        
+        # # 6 Setting 탭 (자리만)
+        # self.setting_tab = SettingsTab(self)
+        # self.tabs.addTab(self.setting_tab, "Setting Tab")        
+        
+        # # 7 Setting 탭 (자리만)
+        # self.setting_tab = SettingsTab(self)
+        # self.tabs.addTab(self.setting_tab, "Setting Tab")
+        
         # 참조를 DesignTab 내부 위젯과 연결
         self.scene = self.design_tab.scene
         self.sequence_list = self.design_tab.sequence_list
