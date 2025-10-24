@@ -2,13 +2,13 @@
 from PyQt5 import QtWidgets
 from designer_window import DesignerWindow
 
-from utils.theme_utils import apply_theme
+from utils.theme_utils import apply_theme_to_window
 
 # -------------------- 메인 애플리케이션 --------------------
 def main():
     app = QtWidgets.QApplication([])
     
-    apply_theme(app, "dark")  # Apply the desired theme here
+    apply_theme_to_window(app, "dark")  # Apply the desired theme here
 
     win = DesignerWindow()
     win.show()

@@ -109,3 +109,10 @@ QTabBar::tab:hover {
 QTabBar::tab:!selected {
     margin-top: 2px;
 }
+
+QStatusBar {
+    background-color: #2e2e2e;
+    color: #e0e0e0;
+    padding: 4px;
+    border-top: 1px solid #444444;
+}

@@ -13,6 +13,7 @@ from ui.tabs.design_tab import DesignTab
 from ui.tabs.dataset_tab import DatasetTab
 from ui.tabs.config_tab import ConfigTab 
 from ui.tabs.setting_tab import SettingsTab 
+from ui.components.footer import Footer
 
 # -------------------- 메인 윈도우 --------------------
 class DesignerWindow(QtWidgets.QMainWindow):
@@ -52,18 +53,10 @@ class DesignerWindow(QtWidgets.QMainWindow):
         self.view = self.design_tab.view
         
         # ---- 상태 표시줄 (Footer) ----
-        self.status_bar = QtWidgets.QStatusBar()
-        self.status_bar.setStyleSheet("""
-            QStatusBar {
-                background-color: #1e1e1e;
-                color: #ffffff;
-                padding: 4px;
-                border-top: 1px solid #3a3a3a;
-            }
-        """)
+        self.status_bar = Footer(self)
         self.setStatusBar(self.status_bar)
 
-        # ---- Footer 텍스트 업데이트 ----
-        self.status_bar.showMessage("Ready")
+        # 메시지 출력
+        self.status_bar.show_temp_message("UI loaded successfully!", 2000)
         
         
